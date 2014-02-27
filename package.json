@@ -1,0 +1,12 @@
+{
+    "name":"chat_server",
+    "author":"kobiluria",
+    "private": "true",
+    "dependencies": {
+        "socket.io": "*",
+        "express": "*",
+    },
+    "scripts": {
+        "start": "node server.js"
+    }
+}
