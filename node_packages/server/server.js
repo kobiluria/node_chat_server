@@ -11,7 +11,10 @@ var server = http.createServer(app)
 var io = require('socket.io').listen(server);
 
 
-// Chat room json file :
+/**
+ * This is the chat room dict
+ * @property chat_rooms
+ */
 var chat_rooms = {};
 
 
