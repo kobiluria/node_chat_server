@@ -45,7 +45,7 @@ io.sockets.on('connection', function (socket) { // First connection
 
         socket.on('disconnect', function () { // Disconnection of the client
             users -= 1;
-            reloadUsers();
+            send_user_count();
 
         });
     }
