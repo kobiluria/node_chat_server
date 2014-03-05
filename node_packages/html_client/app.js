@@ -3,50 +3,58 @@
  * Module dependencies.
  */
 
-var express = require('express');
-var routes = require('./routes');
-var user = require('./routes/user');
-var http = require('http');
-var path = require('path');
+var express = require("express");
+var mustache = require("./mustache.js");
 
-var app = express();
 
-app.configure(function(){
-  app.set('port', process.env.PORT || 3000);
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
-  app.use(express.favicon());
-  app.use(express.logger('dev'));
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(app.router);
-  app.use(require('stylus').middleware(__dirname + '/public'));
-  app.use(express.static(path.join(__dirname, 'public')));
+
+var tmpl = {
+    compile: function (source, options) {
+        if (typeof source == 'string') {
+            return function(options) {
+                options.locals = options.locals || {};
+                options.partials = options.partials || {};
+                if (options.body) // for express.js > v1.0
+                    locals.body = options.body;
+                return mustache.to_html(
+                    source, options.locals, options.partials);
+            };
+        } else {
+            return source;
+        }
+    },
+    render: function (template, options) {
+        template = this.compile(template, options);
+        return template(options);
+    }
+};
+
+var app = express.createServer();
+
+app.configure(function() {
+    app.use(express.methodOverride());
+    app.use(express.bodyDecoder());
+    app.use(app.router);
+    app.set("views", __dirname);
+    app.set("view options", {layout: false});
+    app.register(".html", tmpl);
+    app.use(express.errorHandler({
+        dumpExceptions:true,
+        showStack:true
+    }));
 });
 
-app.configure('development', function(){
-  app.use(express.errorHandler());
+app.get("/", function(req, res) {
+    res.render("index.html", {
+        locals: {
+            message: "Hello World!",
+            items: ["one", "two", "three"]
+        },
+        partials: {
+            foo: "<h1>{{message}}</h1>",
+            bar: "<ul>{{#items}}<li>{{.}}</li>{{/items}}</ul>"
+        }
+    });
 });
 
-app.get('/', function(req, res){
-  res.render('index', {
-    title: 'Home'
-  });
-});
-
-app.get('/about', function(req, res){
-  res.render('about', {
-    title: 'About'
-  });
-});
-
-app.get('/contact', function(req, res){
-  res.render('contact', {
-    title: 'Contact'
-  });
-});
-
-http.createServer(app).listen(app.get('port'), function(){
-  console.log("Express server listening on port " + app.get('port'));
-});
-
+app.listen(3001);
