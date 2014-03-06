@@ -20,8 +20,30 @@
         html = "<span class='privMsg'>" + data.num_of_users + " (P) : " + "</span><br/>";
         $('#msgWindow').append(html);
     });
+
+    $("#contact").submit(function(e){
+        e.preventDefault();
+        var chat_room = $("#chat_room").val();
+        var chat_msg = $("#chat_msg").val();
+        socket.emit('chat_msg',{'chat_room':chat_room,'chat_msg':chat_msg});
+        $('.success').fadeIn(1000);
+
+        return false;
+    });
 </script>
 <div id="msgWindow"></div>
+<form id="chat_submit" method="post">
+    <fieldset>
+        <label>chat_room</label><br />
+        <input name="chat_room" id="chat_room" type="text">
+        <label>chat_msg</label><br />
+        <input name="chat_msg " id="chat_msg" type="text">
+    </fieldset>
+    <input type="submit" value="Send Message" name="submit">
+    <p class="success" style="display:none">Your message has been sent successfully.</p>
+    <p class="error" style="display:none"> something was bad! </p>
+</form>
+
 </body>
  
 </html>
