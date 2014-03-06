@@ -7,7 +7,8 @@
 
 
 
-var io = require('socket.io-client'),socket = io.connect('localhost',{port:8080});
+var io = require('socket.io-client');
+var socket = io.connect('localhost',{port:8080});
 var async = require('async');
 var prompt = require('prompt');
 
