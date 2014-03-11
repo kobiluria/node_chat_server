@@ -6,7 +6,9 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "*",
-    "socket.io": "*"
+      "express": "*",
+      "socket.io": "*",
+      "mysql":  "*",
+      "mootools": "1.4.5"
   }
 }

@@ -10,6 +10,13 @@ var http = require('http')
 var server = http.createServer(app)
 var io = require('socket.io').listen(server);
 
+var mysql = require('mysql');
+var pool  = mysql.createPool({
+    host     : 'localhost',
+    user     : 'webuser',
+    password : 'APh6ifoo'
+});
+require('mootools');
 
 /**
  * This is the chat room dict
@@ -22,26 +29,27 @@ server.listen(appPort);
 
 console.log("Server listening on port : " + appPort);
 
-var users = 0;  // count the users
+
 
 // io socket connection :
 io.sockets.on('connection', function (socket) { // First connection
-        users += 1; // Add 1 to the count
-        send_user_count(); // Send the count to all the users
+        var chatrooms = [];
+        userid = 0;
 
-        // a req for a chat :
-        socket.on('req' , function(msg) {
-            var room_name = msg.room;
-            var chat_count = chat_rooms[room_name];
-            if(chat_count == null){
-                chat_rooms[room_name] = 1;
-            }
-
-            else chat_rooms[room_name] += 1;
-
-            socket.emit('count',{count:chat_rooms[room_name]});
-            console.log(" the room : " + msg.room + "the count" + chat_rooms[room_name]);
-        })
+        socket.on('join' , function(msg) {
+            var chatid = msg.chatid;
+            pool.query('select pkey from chattoken where userid = ? and chatid = ? and tokenid = ?',
+                [userid, msg.chatid,msg.tokenid], function(err,results) {
+                    if (!err &&  results.length ) {
+                        if (!chatrooms.contains(chatid)) chatrooms.push(chatid);
+                        pool.query('delete from chattoken where tokenid = ?', [msg.tokenid]);
+                        socket.join('c' + chatid);
+                    }
+                });
+        });
+        socket.on('identify', function(msg) {
+           userid = msg.id;
+        });
 
         socket.on('disconnect', function () { // Disconnection of the client
             users -= 1;
