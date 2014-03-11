@@ -9,6 +9,7 @@
       "express": "*",
       "socket.io": "*",
       "mysql":  "*",
-      "mootools": "1.4.5"
+      "mootools": "1.4.5",
+      "async": "*"
   }
 }
