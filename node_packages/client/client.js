@@ -8,64 +8,33 @@
 
 
 var io = require('socket.io-client');
-var socket = io.connect('localhost',{port:8080});
+var socket = io.connect('localhost',{port:8081});
 var async = require('async');
 var prompt = require('prompt');
 
+socket.emit('join', {chatid: '234', userid: '337', tokenid: '4abc'});
 
-socket.on('count', function (msg) {
-    console.log(msg.count);
+socket.on('inroom', function(msg) {
+    console.log('inroom');
+    socket.emit('newchat', {
+        chatid: '234', chatnum: '193946',
+        medianum:'199934', chattext: 'Great Game'});
 });
 
-async.series([
-    function (callback) {
-        socket.on('num_of_users',function (msg) {
-            console.log("number of users " + msg.num_of_users);
-            callback(null,'one')
-        });
-    }]);
+socket.on('error', function(msg) {
+    console.log('error: ' + msg.error);
+});
 
-        setInterval(function(){
-            socket.emit('req',{room:'kobi'});
-        }, 5000);
-
-
-    /*function(callback){
-
-        var schema = {
-            properties: {
-                chat_room: {
-                    pattern: /^[a-zA-Z\s\-]+$/,
-                    message: 'Name must be only letters, spaces, or dashes',
-                    required: true
-                }
-            }
-        };
-
-//
-// Start the prompt
-//
-        prompt.start();
-
-//
-// Get two properties from the user: email, password
-//
-        prompt.get(schema, function (err, result) {
-            //
-            // Log the results.
-            //
-            console.log('Command-line input received:');
-            console.log('  chat room : ' + result.chat_room);
-            socket.emit('req', {room : result.chat_room});
-
-            socket.on('count', function (msg) {
-                console.log(msg.count);
-            })
-            callback(null,'two');
-        });
-
-
-    },prompt.pause()*/
+socket.on('addchat', function(msg) {
+    console.log('addchat: ' + msg.chatinfo.toString());
+});
 
 
 
+
+/*pool.query("select tokenid from chattoken where userid = '337' and chatid = '234' and tokenid = '4abc'",
+ [], function(err,results) {
+ chatpush(err, results);
+ }
+ );
+ */
