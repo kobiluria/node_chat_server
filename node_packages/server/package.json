@@ -7,9 +7,10 @@
   },
   "dependencies": {
       "express": "*",
-      "socket.io": "*",
+      "socket.io": "0.9.16",
       "mysql":  "*",
       "mootools": "1.4.5",
-      "async": "*"
+      "async": "*",
+      "request": "*"
   }
 }
