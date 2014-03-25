@@ -6,8 +6,8 @@ var appPort = 8080;
 
 var express = require('express');
 var app = express();
-var http = require('http')
-var server = http.createServer(app)
+var http = require('http');
+var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 var request = require("request");
 
@@ -38,7 +38,7 @@ console.log("Server listening on port : " + appPort);
 
 // io socket connection :
 io.sockets.on('connection', function (socket) { // First connection
-        console.log('connected to chatnode');
+        console.log('connected to chatnode:' + socket.id);
     var chatrooms = [];
     var userid = 0;
     var username = 0;
@@ -63,22 +63,24 @@ io.sockets.on('connection', function (socket) { // First connection
                            }
                         });
                         socket.join(chatGroupName);
+                        console.log(socket.id + ' joined: ' + chatGroupName);
                         io.sockets.socket(socket.id).emit("inroom", {userid: userid, chatid: chatid});
 
                     }
                     else {
                         io.sockets.socket(socket.id).emit("errorfound", {message: userid + ',' + chatid + ': inroom error'});
+                        console.log(socket.id + ' errorfound: ' + chatGroupName);
                     }
                 });
         });
         socket.on('leave' , function(msg) {
             console.log('leave');
-            var chatid = msg.chatid;
-            socket.leave('c' + chatid);
+            var chatGroupName = 'c' + msg.chatid;
+            socket.leave(chatGroupName);
+            console.log(socket.id + ' errorfound: ' + chatGroupName);
         });
 
         socket.on('newchat', function(msg) {
-            console.log('newchat');
             var chatid =   Number.from(msg.chatid);
             var chattext = msg.chattext;
             var chatnum  = msg.chatnum;
@@ -87,6 +89,8 @@ io.sockets.on('connection', function (socket) { // First connection
             var userpic  = msg.userpic;
             var username = msg.username;
             var password = msg.password;
+            console.log('newchat');
+            console.log(socket.id + ' newchat received: c' + chatid + ' text: ' + chattext);
 
             var chatkey = 0;
 
@@ -116,7 +120,7 @@ io.sockets.on('connection', function (socket) { // First connection
                                         var chatinfo = [fullname, userpic, chattext, time, chatkey, chatnum, mediaurl];
                                         //io.sockets.in('room').emit('addchat', {chatinfo: chatinfo});
                                         socket.broadcast.to('c' + chatid).emit('addchat', {chatid: chatid, chatinfo: chatinfo});
-                                        console.log('broadcast chat');
+                                        console.log(socket.id + ' broadcast caht: c' + chatid + ' text: ' + chattext);
                                     }
                                 });
                         }
@@ -150,6 +154,7 @@ io.sockets.on('connection', function (socket) { // First connection
 
         socket.on('disconnect', function () { // Disconnection of the client
             var x12 = 12;
+            console.log(socket.id + ' disconnect');
         });
     }
 );
