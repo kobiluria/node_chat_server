@@ -69,7 +69,7 @@ io.sockets.on('connection', function (socket) { // First connection
                     }
                     else {
                         io.sockets.socket(socket.id).emit("errorfound", {message: userid + ',' + chatid + ': inroom error'});
-                        console.log(socket.id + ' errorfound: ' + chatGroupName);
+                        console.log(socket.id + ' errorfound: ' + chatGroupName + ' ' + err);
                     }
                 });
         });
