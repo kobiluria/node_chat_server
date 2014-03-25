@@ -46,7 +46,8 @@ io.sockets.on('connection', function (socket) { // First connection
 //        io.sockets.socket(socket.id).emit("connected", {});
         socket.emit("connected", {});
         socket.on('join' , function(msg) {
-            console.log('join');
+            var chatGroupName = 'c' + chatid;
+            console.log(socket.id + ' join: ' + chatGroupName + ' token: ' + msg.tokenid);
             var chatid = Number.from(msg.chatid);
             userid = msg.userid;
 //            pool.query('select pkey from chattoken where userid = ? and chatid = ? and tokenid = ?',
@@ -55,7 +56,6 @@ io.sockets.on('connection', function (socket) { // First connection
                     if (!err &&  results.length ) {
                         if (!chatrooms.contains(chatid)) chatrooms.push(chatid);
 //                        pool.query('delete from chattoken where tokenid = ?', [msg.tokenid]);
-                        var chatGroupName = 'c' + chatid;
                         var rooms = io.sockets.manager.roomClients[socket.id];
                         Object.each(rooms, function(value,key) {
                            if (key != '' &&  key != '/' + chatGroupName) {
