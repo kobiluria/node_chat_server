@@ -47,7 +47,7 @@ io.sockets.on('connection', function (socket) { // First connection
         socket.emit("connected", {});
         socket.on('join' , function(msg) {
             var chatGroupName = 'c' + msg.chatid;
-            console.log(socket.id + ' join: ' + chatGroupName + ' token: ' + msg.tokenid);
+            console.log('userid: ' + msg.userid + ' ' + socket.id + ' join: ' + chatGroupName + ' token: ' + msg.tokenid);
             var chatid = Number.from(msg.chatid);
             userid = msg.userid;
 //            pool.query('select pkey from chattoken where userid = ? and chatid = ? and tokenid = ?',
