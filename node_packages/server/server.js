@@ -46,7 +46,7 @@ io.sockets.on('connection', function (socket) { // First connection
 //        io.sockets.socket(socket.id).emit("connected", {});
         socket.emit("connected", {});
         socket.on('join' , function(msg) {
-            var chatGroupName = 'c' + chatid;
+            var chatGroupName = 'c' + msg.chatid;
             console.log(socket.id + ' join: ' + chatGroupName + ' token: ' + msg.tokenid);
             var chatid = Number.from(msg.chatid);
             userid = msg.userid;
