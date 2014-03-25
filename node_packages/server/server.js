@@ -15,10 +15,12 @@ io.set('log level', 1);
 
 var mysql = require('mysql');
 var pool  = mysql.createPool({
-    host     : 'localhost',
+    host     : 'localhost:3306',
     user     : 'webuser',
-    password : 'APh6ifoo',
-    database:  'imsportzdemo'
+    password : '',
+    database:  'imsportz'
+//    password : 'APh6ifoo',
+//    database:  'imsportzdemo'
 });
 require('mootools');
 async = require('async');
