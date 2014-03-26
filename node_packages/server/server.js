@@ -144,10 +144,14 @@ io.sockets.on('connection', function (socket) { // First connection
                     username: username,
                     password: password,
                     chatid: chatid
-                }), function(error, response, body) {
+                }),
+                    function(error, response, body) {
+                        console.log('request - error: ' + error + ' response: ' + ' body: ' + body);
+
                     if (body == "true") {
                         sendNewChat();
                     }
+
                 });
 //                    io.sockets.socket(socket.id).emit("notinroom", {userid: userid, chatid: chatid});
             }
