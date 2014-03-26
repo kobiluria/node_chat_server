@@ -118,7 +118,7 @@ io.sockets.on('connection', function (socket) { // First connection
                                     }
                                     else {
                                         chatkey = result.insertId;
-                                        var mediaurl = '{chatid}.{userid}.{medianum}'.substitute({chatid: chatid, userid: userid, medianum: medianum});
+                                        var mediaurl =  medianum ? '{chatid}.{userid}.{medianum}'.substitute({chatid: chatid, userid: userid, medianum: medianum}) : '';
                                         var chatinfo = [fullname, userpic, chattext, time, chatkey, chatnum, mediaurl];
                                         io.sockets.in('c' + chatid).emit('addchat', {chatid: chatid,chatinfo: chatinfo});
                                         //socket.broadcast.to('c' + chatid).emit('addchat', {chatid: chatid, chatinfo: chatinfo});
