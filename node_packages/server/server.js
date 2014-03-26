@@ -139,12 +139,14 @@ io.sockets.on('connection', function (socket) { // First connection
                  $userid    = Tools::assignIf($_REQUEST['chatid'],'');
                  $chatid    = Tools::assignIf($_REQUEST['chatid'],'');
                  if ($password == "areqwbrtybybwre") {
-                 */ 
-                request("http://imsportz.com/MEMBERPGMS/getchatAppropriate.php?pass=areqwbrtybybwre&username={username}&password={password}&chatid={chatid}".substitute({
+                 */
+                var requestString = "http://imsportz.com/MEMBERPGMS/getchatAppropriate.php?pass=areqwbrtybybwre&username={username}&password={password}&chatid={chatid}".substitute({
                     username: username,
                     password: password,
                     chatid: chatid
-                }),
+                });
+                console.log('request: ' + requestString);
+                request(requestString,
                     function(error, response, body) {
                         console.log('request - error: ' + error + ' response: ' + ' body: ' + body);
 
