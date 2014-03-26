@@ -120,9 +120,9 @@ io.sockets.on('connection', function (socket) { // First connection
                                         chatkey = result.insertId;
                                         var mediaurl = '{chatid}.{userid}.{medianum}'.substitute({chatid: chatid, userid: userid, medianum: medianum});
                                         var chatinfo = [fullname, userpic, chattext, time, chatkey, chatnum, mediaurl];
-                                        //io.sockets.in('room').emit('addchat', {chatinfo: chatinfo});
-                                        socket.broadcast.to('c' + chatid).emit('addchat', {chatid: chatid, chatinfo: chatinfo});
-                                        console.log(socket.id + ' broadcast caht: c' + chatid + ' text: ' + chattext);
+                                        io.sockets.in('c' + chatid).emit('addchat', {chatid: chatid,chatinfo: chatinfo});
+                                        //socket.broadcast.to('c' + chatid).emit('addchat', {chatid: chatid, chatinfo: chatinfo});
+                                        console.log(socket.id + ' broadcast chat: c' + chatid + ' text: ' + chattext);
                                     }
                                 });
                         }
