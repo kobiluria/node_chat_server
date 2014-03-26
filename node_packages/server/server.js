@@ -140,7 +140,7 @@ io.sockets.on('connection', function (socket) { // First connection
                  $chatid    = Tools::assignIf($_REQUEST['chatid'],'');
                  if ($password == "areqwbrtybybwre") {
                  */
-                request("http://imsp.local/MEMBERPGMS/getchatAppropriate.php?pass=areqwbrtybybwre&username={username}&password={password}&chatid={chatid}".substitute({
+                request("http://imsportz.com/MEMBERPGMS/getchatAppropriate.php?pass=areqwbrtybybwre&username={username}&password={password}&chatid={chatid}".substitute({
                     username: username,
                     password: password,
                     chatid: chatid
