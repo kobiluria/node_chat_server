@@ -51,11 +51,12 @@ io.sockets.on('connection', function (socket) { // First connection
             var chatGroupName = 'c' + msg.chatid;
             console.log('userid: ' + msg.userid + ' ' + socket.id + ' join: ' + chatGroupName + ' token: ' + msg.tokenid);
             var chatid = Number.from(msg.chatid);
-            userid = msg.userid;
+            var joinuserid = msg.userid;
 //            pool.query('select pkey from chattoken where userid = ? and chatid = ? and tokenid = ?',
             pool.query('select pkey from chattoken where userid = ? and chatid = ? and tokenid = ?',
-                [userid, chatid,msg.tokenid], function(err,results) {
+                [joinuserid, chatid,msg.tokenid], function(err,results) {
                     if (!err &&  results.length ) {
+                        userid = joinuserid;
                         if (!chatrooms.contains(chatid)) chatrooms.push(chatid);
 //                        pool.query('delete from chattoken where tokenid = ?', [msg.tokenid]);
                         var rooms = io.sockets.manager.roomClients[socket.id];
@@ -96,6 +97,9 @@ io.sockets.on('connection', function (socket) { // First connection
             var userpic  = msg.userpic;
             var username = msg.username;
             var password = msg.password;
+            var newchatuserid = msg.userid;
+
+
             console.log('newchat');
             console.log(socket.id + ' newchat received: c' + chatid + ' text: ' + chattext);
 
@@ -135,15 +139,17 @@ io.sockets.on('connection', function (socket) { // First connection
                 });
             }
             var inRoom = io.sockets.manager.roomClients[socket.id]['/c' + chatid];
-            if (inRoom) {
+            if (inRoom && userid == newchatuserid) {
 //            if (chatrooms.contains(chatid)) {
                 sendNewChat();
             }
             else  {
-                var requestString = "http://imsportz.com/MEMBERPGMS/getchatAppropriate.php?pass=areqwbrtybybwre&username={username}&password={password}&chatid={chatid}".substitute({
+
+                var requestString = "http://imsportz.com/MEMBERPGMS/getchatAppropriate.php?pass=areqwbrtybybwre&username={username}&password={password}&chatid={chatid}&userid={userid}".substitute({
                     username: username,
                     password: password,
-                    chatid: chatid
+                    chatid: chatid,
+                    userid: userid
                 });
                 console.log('request: ' + requestString);
                 request(requestString,
@@ -152,8 +158,12 @@ io.sockets.on('connection', function (socket) { // First connection
                         io.sockets.socket(socket.id).emit("notinroom", {userid: userid, chatid: chatid});
 
                     if (body == "true") {
-                        sendNewChat();
-
+                        if (!userid) {
+                            userid = newchatuserid;
+                        }
+                        if (userid == newchatuserid) {
+                            sendNewChat();
+                        }
                     }
 
                 });
