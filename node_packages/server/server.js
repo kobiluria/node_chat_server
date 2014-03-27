@@ -54,7 +54,7 @@ io.sockets.on('connection', function (socket) { // First connection
             userid = msg.userid;
 //            pool.query('select pkey from chattoken where userid = ? and chatid = ? and tokenid = ?',
             pool.query('select pkey from chattoken where userid = ? and chatid = ? and tokenid = ?',
-                [userid, msg.chatid,msg.tokenid], function(err,results) {
+                [userid, chatid,msg.tokenid], function(err,results) {
                     if (!err &&  results.length ) {
                         if (!chatrooms.contains(chatid)) chatrooms.push(chatid);
 //                        pool.query('delete from chattoken where tokenid = ?', [msg.tokenid]);
@@ -68,6 +68,11 @@ io.sockets.on('connection', function (socket) { // First connection
                         console.log(socket.id + ' joined: ' + chatGroupName);
                         io.sockets.socket(socket.id).emit("inroom", {userid: userid, chatid: chatid});
 
+                    }
+                    else if (!err && results.length) {
+                        // sql was successfull, but he's not in the room
+                        io.sockets.socket(socket.id).emit("notinroom", {chatid: chatid, message: userid + ',' + chatid + ': inroom error'});
+                        console.log("socket: {socket} userid: {userid} chatid: {chatid} tokenid: {tokenid}").substitute({socket: socket.id, userid: userid, chatid: chatid, tokenid: msg.tokenid})
                     }
                     else {
                         io.sockets.socket(socket.id).emit("errorfound", {message: userid + ',' + chatid + ': inroom error'});
@@ -135,11 +140,6 @@ io.sockets.on('connection', function (socket) { // First connection
                 sendNewChat();
             }
             else  {
-                /*    $password  = Tools::assignIf($_REQUEST['pass'],'');
-                 $userid    = Tools::assignIf($_REQUEST['chatid'],'');
-                 $chatid    = Tools::assignIf($_REQUEST['chatid'],'');
-                 if ($password == "areqwbrtybybwre") {
-                 */
                 var requestString = "http://imsportz.com/MEMBERPGMS/getchatAppropriate.php?pass=areqwbrtybybwre&username={username}&password={password}&chatid={chatid}".substitute({
                     username: username,
                     password: password,
@@ -149,9 +149,11 @@ io.sockets.on('connection', function (socket) { // First connection
                 request(requestString,
                     function(error, response, body) {
                         console.log('request - error: ' + error + ' response: ' + ' body: ' + body);
+                        io.sockets.socket(socket.id).emit("notinroom", {userid: userid, chatid: chatid});
 
                     if (body == "true") {
                         sendNewChat();
+
                     }
 
                 });
