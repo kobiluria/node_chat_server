@@ -68,7 +68,11 @@ io.sockets.on('connection', function (socket) { // First connection
                         socket.join(chatGroupName);
                         console.log(socket.id + ' joined: ' + chatGroupName);
                         io.sockets.socket(socket.id).emit("inroom", {userid: userid, chatid: chatid});
-
+                        var numusers = io.sockets.clients(chatGroupName).length;
+                        if (!numusers) numusers = 0;
+                        pool.query("update chatdescription set numusers= ? where pkey= ?",
+                            [numusers,chatid], function(err,results) {
+                        });
                     }
                     else if (!err && results.length) {
                         // sql was successfull, but he's not in the room
@@ -171,7 +175,6 @@ io.sockets.on('connection', function (socket) { // First connection
             }
             io.sockets.socket(socket.id).emit("chatreceived", {chatnum: chatnum});  // do this in any case so that the client stop sending the chat
         });
-
         socket.on('disconnect', function () { // Disconnection of the client
             var x12 = 12;
             console.log(socket.id + ' disconnect');
