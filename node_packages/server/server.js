@@ -18,7 +18,7 @@ var pool  = mysql.createPool({
     host     : 'localhost',
     user     : 'webuser',
     password : 'APh6ifoo',
-    database:  'imsportz'
+    database:  'imsportzdemo'
 //
 //    database:  'imsportzdemo'
 });
@@ -66,12 +66,20 @@ io.sockets.on('connection', function (socket) { // First connection
                            }
                         });
                         socket.join(chatGroupName);
-                        console.log(socket.id + ' joined: ' + chatGroupName);
+
                         io.sockets.socket(socket.id).emit("inroom", {userid: userid, chatid: chatid});
+                        console.log(socket.id + ' joined: ' + chatGroupName);
                         var numusers = io.sockets.clients(chatGroupName).length;
                         if (!numusers) numusers = 0;
                         pool.query("update chatdescription set numusers= ? where pkey= ?",
-                            [numusers,chatid], function(err,results) {
+                            [numusers,chatid],
+                            function(err,results){
+                                if (err) {
+                                    console.log(socket.id + ' errorfound  numusers: ' + numusers + ': ' + chatid + ' ' + err);
+                                }
+                                else {
+                                    console.log(socket.id + '  numusers:' + numusers + ': ' + chatid);
+                                }
                         });
                     }
                     else if (!err && results.length) {
